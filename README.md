@@ -58,12 +58,16 @@ given a multi-step form organized like this:
 ```
 
 you can use kgb to easily transform these forms into a multi-step workflow
-based on each form's answer.  the 'on' method takes an event first parameter,
-one of 'submit', 'show', or 'hide', and a second, data-kgb-key of the form.
-the callback will be pass the params of the flow, which are a hash of
-data-kgb-key mapping to the keys/values of that form.  note that the params
-object accumulates data under the data-kgb-keys, so if the the form above was
-configured like this:
+based on each form's answer.  the 'on' method takes an event first argument,
+one of 'submit', 'show', or 'hide', and a second, the 'data-kgb-key' of the form.
+
+each callback will be passed the entire, accumulated, params of the flow,
+which are a hash of 'data-kgb-key' mapping to the keys+values of that form.
+the submit callback should return the 'data-kgb-key' of the next form to show,
+and you can decide this based on arbitrary javascript code.
+
+note that the params object *accumulates* data under the 'data-kgb-key', so if
+the the form above was configured like this:
 
 
 ```javascript
@@ -110,7 +114,7 @@ the callbacks would fire the first time with params=
 ```javascript
 
  {
-   'question-1' : { 'question' : 'a' }  // or 'b' depending on the answer...
+   'question-1' : { 'question' : 'a' }
  }
 
 ```
@@ -120,10 +124,22 @@ and, the 2nd time, assuming the above, it would look like
 ```javascript
 
  {
-   'question-2' : { 'question' : 'c' }  // or 'd' depending on the answer...
+   'question-1' : { 'question' : 'a' },
+   'question-2' : { 'question' : 'c' }
  }
 
 ```
+
+in plain english, all callbacks are passed the total set of all submissions
+seen.
+
+note that that kdb intercepts the 'submit' event on all forms it touches, so
+it up to you to eventually do something with the accumulated params, such as
+ajax submit them to your server.
+
+also note that arbitrary flows, including those containing cycles, can be
+configured, since the logic for moving from flow to flow is completely
+arbitrary javascript.
 
 EXAMPLE
 =======
