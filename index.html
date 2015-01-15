@@ -2,8 +2,8 @@
 
 <head>
   <script src='//code.jquery.com/jquery-2.1.3.min.js'></script>
-  <script src='/kgb/javascripts/jquery.cookie.js'></script> 
-  <script src='/kgb/javascripts/kgb.js'></script> 
+  <script src='//ahoward.github.io/kgb/javascripts/jquery.cookie.js'></script> 
+  <script src='//ahoward.github.io/kgb/javascripts/kgb.js'></script> 
 </head>
 
 <body>
@@ -105,6 +105,7 @@
 
 <!-- investor -->
   <form data-kgb-key='/investor/1' data-kgb-next='/finish' style='display:none'>
+    <label>how much u got?</label>
     <input name='investment' placeholder='how much money mofo' value='$42,000,000'>
 
     <br> <br>
@@ -124,10 +125,9 @@
     <br>
     <hr>
 
-<!--
-    <input type='submit'>
--->
-    <input type='hidden' name='results' id='results'>
+    <textarea class='results' style='width:100%;height:10em;'>
+    </textarea>
+    <input type='submit' onClick='alert("ajax submit results here!"); return(false);'>
 
     <br>
     <br>
@@ -193,7 +193,7 @@
     //
       k.on('show', '/finish', function(form){
       //
-        form.find('input[name=results]').val(k.to_json());
+        form.find('.results').val(k.to_json());
 
       //
         form.find('pre').text(k.to_json());
