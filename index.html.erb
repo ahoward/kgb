@@ -1,0 +1,257 @@
+<html>
+
+<head>
+  <script src='https://code.jquery.com/jquery-2.1.3.min.js'></script>
+  <script src='https://raw.githubusercontent.com/carhartl/jquery-cookie/master/src/jquery.cookie.js'></script> 
+  <script src='https://raw.githubusercontent.com/ahoward/kgb/master/src/kgb.js'></script> 
+</head>
+
+<body>
+
+<br>
+<br>
+
+
+<!-- -->
+  <form data-kgb-key='/start'>
+    Hai, are you
+    <br>
+
+    <input type='radio' name='type' value='client'>
+      A Client
+      <br>
+
+    <input type='radio' name='type' value='applicant'>
+      Applying for a YoB
+      <br>
+
+    <input type='radio' name='type' value='investor'>
+      An Investor
+      <br>
+
+    <br> <br>
+    <a class='next' href='#'>Next &rarr;</a>
+  </form>
+
+<!-- -->
+  <form data-kgb-key='/client/1' style='display:none'>
+    Do you want it?
+    <br>
+
+    <input type='checkbox' name='good' value='good'>
+      Good
+      <br>
+
+    <input type='checkbox' name='fast' value='fast'>
+      Fast
+      <br>
+
+    <input type='checkbox' name='cheap' value='cheap'>
+      Cheap
+      <br>
+
+    <br> <br>
+    <a class='next' href='#'>Next &rarr;</a>
+    <br> <br>
+    <a class='back' href='#'>&larr; Back</a>
+  </form>
+
+<!-- -->
+  <form data-kgb-key='/client/2' style='display:none'>
+    <textarea name=comments>
+      Say Anything
+    </textarea>
+
+    <br> <br>
+    <a class='next' href='#'>Next &rarr;</a>
+    <br> <br>
+    <a class='back' href='#'>&larr; Back</a>
+  </form>
+
+<!-- -->
+  <form data-kgb-key='/client/3' data-kgb-next='/finish' style='display:none'>
+    <input name='email' type='email' placeholder='email' value='steaver@dojo4.com'>
+
+    <br> <br>
+    <input name='name' placeholder='first_name' value='Steaver'>
+
+    <br> <br>
+    <input name='name' placeholder='last_name'value='Bailey'>
+
+    <br> <br>
+    <a class='next' href='#'>Next &rarr;</a>
+    <br> <br>
+    <a class='back' href='#'>&larr; Back</a>
+  </form>
+
+<!-- applicant -->
+  <form data-kgb-key='/applicant/1' data-kgb-next='/finish' style='display:none'>
+    Are you?
+    <br>
+
+    <input type='checkbox' name='developer' value='developer'>
+      A developer
+      <br>
+
+    <input type='checkbox' name='designer' value='designer'>
+      A designer
+      <br>
+
+    <br> <br>
+    <a class='next' href='#'>Next &rarr;</a>
+    <br> <br>
+    <a class='back' href='#'>&larr; Back</a>
+  </form>
+
+<!-- investor -->
+  <form data-kgb-key='/investor/1' data-kgb-next='/finish' style='display:none'>
+    <input name='investment' placeholder='how much money mofo' value='$42,000,000'>
+
+    <br> <br>
+    <a class='next' href='#'>Next &rarr;</a>
+    <br> <br>
+    <a class='back' href='#'>&larr; Back</a>
+  </form>
+
+
+<!-- finish -->
+  <form name='kgb' action='/kgb/thanks' data-kgb-key='/finish' style='display:none'>
+
+    you're done - submit your answers to us!
+    <br> <br>
+    <a class='back' href='#'>&larr; Back</a>
+
+    <br>
+    <hr>
+    <input type='submit'>
+    <input type='hidden' name='results' id='results'>
+
+    <br>
+    <br>
+    <h5>DEBUGGING HERE</h5>
+    &darr;&darr;&darr;
+    <br>
+    <br>
+    <pre style='color:chartreuse;background-color:black;padding:1em;font-family:monospace;font-size:xx-small;'></pre>
+
+
+<!--
+    <a class='mailto' href='#'>Send us your answers!</a>
+-->
+  </form>
+
+
+<body>
+
+
+
+
+  <script>
+    jQuery(function(){
+    //
+      var jq = jQuery;
+
+    //
+      var k = kgb.ify('/start');
+
+    //
+      k.on('submit', '/start', function(params){
+        var type = params['type'];
+
+        switch(type){
+          case 'client':
+            return '/client/1';
+
+          case 'applicant':
+            return '/applicant/1';
+
+          case 'investor':
+            return '/investor/1';
+
+          default:
+            return '/client/1';
+        }
+      });
+
+    //
+      k.on('submit', '/client/1', function(params){
+        if(params['good'] && params['fast'] && params['cheap']){
+          alert("Pick two and try again please!");
+          return false;
+        } else {
+          return '/client/2';
+        }
+      });
+
+      k.on('submit', '/client/2', function(data){
+        return '/client/3';
+      });
+
+    //
+      k.on('show', '/finish', function(form){
+      //
+        form.find('input[name=results]').val(k.to_json());
+
+      //
+        form.find('pre').text(k.to_json());
+
+
+
+      //
+        var a = form.find('a.mailto');
+
+        var query = {};
+
+        var subject = '[dojo4.application]';
+
+        var body = ''
+        body = body + "\n\n";
+        body = body + "(( type any your own comments/questions here ))";
+        body = body + "\n\n\n\n";
+        body = body + "(( this is robot data that we actually want/need ))";
+        body = body + "\n\n";
+        body = body + k.to_json();
+
+        var query = {};
+        query['subject'] = subject;
+        query['body'] = body;
+
+        //var href = 'mailto:?subject=' + encodeURIComponent(subject) + [dojo4.application]&body=' + encodeURIComponent(body);
+        var kvs = [];
+
+        for(var key in query){
+          if(query.hasOwnProperty(key)){
+            var val = query[key];
+            kvs.push([key, encodeURIComponent(val)].join('='));
+          }
+        }
+
+        var href = 'mailto:?' + kvs.join('&');
+
+        a.attr('href', href);
+        a.attr('target', '_blank');
+
+        return false;
+      });
+
+    //
+      jq('.back').attr('href', 'javascript:void("back")');
+      jq('.back').click(function(){
+        k.back();
+        return(false);
+      });
+
+      jq('.next').attr('href', 'javascript:void("next")');
+      jq('.next').click(function(){
+        jq(this).closest('form').submit();
+        return(false);
+      });
+
+    //
+      window._k = k;
+    });
+  </script>
+
+
+
+</html>
