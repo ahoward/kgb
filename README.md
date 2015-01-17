@@ -6,7 +6,8 @@ kgb.js
 SYNOPSIS
 ========
 
-an ultra-lightweight javascript tool for building wizard-y 'if that then this' workflows and multi-step forms.
+an ultra-lightweight javascript tool for building wizard-y 'if that then this'
+workflows and multi-step forms.
 
 USAGE
 =====
@@ -59,16 +60,13 @@ given a multi-step form organized like this:
 
 you can use kgb to easily transform these forms into a multi-step workflow
 based on each form's answer.  the 'on' method takes an event first argument,
-one of 'submit', 'show', or 'hide', and a second, the 'data-kgb-key' of the form.
+one of 'submit', 'show', or 'hide', and a second, the 'data-kgb-key' of the
+form.
 
-each callback will be passed the entire, accumulated, params of the flow,
-which are a hash of 'data-kgb-key' mapping to the keys+values of that form.
-the submit callback should return the 'data-kgb-key' of the next form to show,
-and you can decide this based on arbitrary javascript code.
-
-note that the params object *accumulates* data under the 'data-kgb-key', so if
-the the form above was configured like this:
-
+each callback will be passed the params from the form in question, which are a
+hash of input names to input values.  the submit callback should return the
+'data-kgb-key' of the *next* form to show, if any, and you can determine this
+based on arbitrary javascript code. for example, given:
 
 ```javascript
 
@@ -113,25 +111,48 @@ the callbacks would fire the first time with params=
 
 ```javascript
 
- {
-   'question-1' : { 'question' : 'a' }
- }
+ { 'question' : 'a' }
 
 ```
 
-and, the 2nd time, assuming the above, it would look like
+and, the 2nd time, assuming the above, with
 
 ```javascript
 
- {
-   'question-1' : { 'question' : 'a' },
-   'question-2' : { 'question' : 'c' }
- }
+ { 'question' : 'c' }
+
 
 ```
 
-in plain english, all callbacks are passed the total set of all submissions
-seen.
+in plain english each callback is passed the data for that form, when
+submitted.
+
+you may need access to global data about other forms, and the order they were
+traveled in by the user.  kgb provides this to you via an array of params
+called 'results':
+
+```javascript
+
+    //
+      var k = kgb.ify('question-1');
+
+
+    // ...
+
+
+    //
+      k.on('submit', 'question-17', function(params){
+
+        var answer = params['question'];
+
+        var results = k.results; // an array of hashes for for each form the user has visited
+
+      });
+
+```
+
+in plain english, all callbacks have access to the total set of all
+submissions seen, in order.
 
 note that that kdb intercepts the 'submit' event on all forms it touches, so
 it up to you to eventually do something with the accumulated params, such as
