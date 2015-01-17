@@ -155,7 +155,7 @@ in plain english, all callbacks have access to the total set of all
 submissions seen, in order.
 
 note that that kdb intercepts the 'submit' event on all forms it touches, so
-it up to you to eventually do something with the accumulated params, such as
+it is up to you to eventually do something with the accumulated params, such as
 ajax submit them to your server.
 
 also note that arbitrary flows, including those containing cycles, can be
